@@ -20,8 +20,8 @@ public class EnemyBullet extends GameObject {
 
     @Override
     public void tick() {
-        x += velX;
-        y += velY;
+        x += Math.toIntExact(Math.round(velX));
+        y += Math.toIntExact(Math.round(velY));
 
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);

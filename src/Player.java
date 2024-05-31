@@ -3,8 +3,6 @@ import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.sql.Date;
-import java.util.Timer;
 
 public class Player extends GameObject {
 
@@ -35,8 +33,8 @@ public class Player extends GameObject {
 
     @Override
     public void tick() {
-        x += velX;
-        y += velY;
+        x += Math.toIntExact(Math.round(velX));
+        y += Math.toIntExact(Math.round(velY));
 
         game.playerLoc[0] = y / 32;
         game.playerLoc[1] = x / 32;
@@ -61,9 +59,6 @@ public class Player extends GameObject {
                 prevShootTime = shootTime;
                 shootTime = System.currentTimeMillis();
                 handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), x, y, ss));
-                // System.out.println("Player coords (" + x + ", " + y + ")");
-                // System.out.println("Mouse coords (" + (MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7) + ", " + (MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30) + ")");
-                //u need to: -7 x, -30 y
                 game.ammo--;
             }
         }
@@ -115,7 +110,6 @@ public class Player extends GameObject {
         //power cubes
         if (game.powercubes != 0) {
             g.setColor(Color.green);
-            // g.drawRect(x + 20, y - 35, 10, 15);
             g.drawString("" + game.powercubes, x + 21, y - 26);
             g.drawImage(pcImage, x + 5, y - 35, null);
         }
@@ -131,8 +125,8 @@ public class Player extends GameObject {
             GameObject temp = handler.object.get(i);
             if (temp.getId() == ID.Block) {
                 if (getBounds().intersects(temp.getBounds())) {
-                    x += velX * -1;
-                    y += velY * -1;
+                    x += Math.toIntExact(Math.round(velX * -1));
+                    y += Math.toIntExact(Math.round(velY * -1));
                 }
             }
 
@@ -140,8 +134,6 @@ public class Player extends GameObject {
                 if (getBounds().intersects(temp.getBounds())) {
                     game.powercubes++;
                     handler.removeObject(temp);
-//                    System.out.println("dmg: " + game.playerDmg);
-//                    System.out.println("health: " + game.maxHp);
                 }
             }
 

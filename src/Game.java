@@ -41,11 +41,9 @@ public class Game extends Canvas implements Runnable {
         ImageLoader loader = new ImageLoader();
         scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
         sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
-        // pcImage = loader.loadImage("Assets/")
 
         ss = new SpriteSheet(sprite_sheet);
         floor = ss.grabImage(4, 2, 32, 32);
-        // this.addMouseListener(new MouseInput(handler, camera, this, ss));
 
         loadLevel(scene_1);
     }
@@ -132,8 +130,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void loadLevel(BufferedImage image) {
-        int w = image.getWidth(); //64
-        int h = image.getHeight(); //36
+        int w = image.getWidth();
+        int h = image.getHeight();
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -148,30 +146,19 @@ public class Game extends Canvas implements Runnable {
                 }
                 if (green == 255 && blue == 76) {
                     handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, ss, this));
-                    enemyLoc[0] = j; //24
-                    enemyLoc[1] = i; //44
+                    enemyLoc[0] = j;
+                    enemyLoc[1] = i;
                 }
                 if (blue == 255 && green == 54) {
                     handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, ss, camera));
-                    playerLoc[0] = j; //5
-                    playerLoc[1] = i; //6
+                    playerLoc[0] = j;
+                    playerLoc[1] = i;
                 }
                 if (blue == 255 && green == 255) {
                     handler.addObject(new Crate(i*32, j*32, ID.Crate, ss));
                 }
             }
         }
-        // System.out.println("enemy loc: " + enemyLoc[1] + ", " + enemyLoc[0]);
-//        System.out.println("player loc: " + playerLoc[1] + ", " + playerLoc[0]);
-
-        // for (int i = 0; i < grid.length; i++) {
-        //     for (int j = 0; j < grid[0].length; j++) {
-        //         if (i == 44 && j == 24) System.out.println(7 + "PP");
-        //         else System.out.print(grid[i][j] + ",");
-        //     }
-        //     System.out.println();
-        // }
-
     }
 
     public static void main(String[] args) {

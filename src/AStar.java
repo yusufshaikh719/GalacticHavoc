@@ -3,24 +3,19 @@ import java.util.Stack;
 
 public class AStar {
 
-//Java Program to implement A* Search Algorithm
-
-    //Here we're creating a shortcut for (int, int) pair
     public static class Pair {
         int first;
         int second;
-        public Pair(int first, int second){
+        public Pair(int first, int second) {
             this.first = first;
             this.second = second;
         }
 
-        @Override
         public boolean equals(Object obj) {
             return obj instanceof Pair && this.first == ((Pair)obj).first && this.second == ((Pair)obj).second;
         }
     }
 
-    // Creating a shortcut for tuple<int, int, int> type
     public static class Details {
         double value;
         int i;
@@ -33,13 +28,11 @@ public class AStar {
         }
     }
 
-    // a Cell (node) structure
     public static class Cell {
         public Pair parent;
-        // f = g + h, where h is heuristic
+
         public double f, g, h;
-        Cell()
-        {
+        Cell() {
             parent = new Pair(-1, -1);
             f = -1;
             g = -1;
@@ -54,47 +47,27 @@ public class AStar {
         }
     }
 
-    // method to check if our cell (row, col) is valid
-    boolean isValid(int[][] grid, int rows, int cols,
-                    Pair point)
-    {
+    boolean isValid(int[][] grid, int rows, int cols, Pair point) {
         if (rows > 0 && cols > 0)
-            return (point.first >= 0) && (point.first < rows)
-                    && (point.second >= 0)
-                    && (point.second < cols);
-
+            return (point.first >= 0) && (point.first < rows) && (point.second >= 0) && (point.second < cols);
         return false;
     }
 
-    //is the cell blocked?
-
-    boolean isUnBlocked(int[][] grid, int rows, int cols,
-                        Pair point)
-    {
-        return isValid(grid, rows, cols, point)
-                && grid[point.first][point.second] == 1;
+    boolean isUnBlocked(int[][] grid, int rows, int cols, Pair point) {
+        return isValid(grid, rows, cols, point) && grid[point.first][point.second] == 1;
     }
 
-    //Method to check if destination cell has been already reached
     boolean isDestination(Pair position, Pair dest)
     {
         return position == dest || position.equals(dest);
     }
 
-    // Method to calculate heuristic function
-    double calculateHValue(Pair src, Pair dest)
-    {
+    double calculateHValue(Pair src, Pair dest) {
         return Math.sqrt(Math.pow((src.first - dest.first), 2.0) + Math.pow((src.second - dest.second), 2.0));
     }
 
-    // Method for tracking the path from source to destination
+    String tracePath(Cell[][] cellDetails, int cols, int rows, Pair dest) {
 
-    String tracePath(
-            Cell[][] cellDetails,
-            int cols,
-            int rows,
-            Pair dest)
-    {   //A* Search algorithm path
         String str = "";
         str += "The Path:  ";
 
@@ -109,7 +82,7 @@ public class AStar {
             nextNode = cellDetails[row][col].parent;
             row = nextNode.first;
             col = nextNode.second;
-        } while (cellDetails[row][col].parent != nextNode); // until src
+        } while (cellDetails[row][col].parent != nextNode);
 
         int count = 0;
         while (!path.empty()) {
@@ -122,14 +95,7 @@ public class AStar {
         return str;
     }
 
-// A main method, A* Search algorithm to find the shortest path
-
-    String aStarSearch(int[][] grid,
-                     int rows,
-                     int cols,
-                     Pair src,
-                     Pair dest)
-    {
+    String aStarSearch(int[][] grid, int rows, int cols, Pair src, Pair dest) {
 
         String str = "";
 
@@ -154,12 +120,11 @@ public class AStar {
         }
 
 
-        boolean[][] closedList = new boolean[rows][cols];//our closed list
+        boolean[][] closedList = new boolean[rows][cols];
 
         Cell[][] cellDetails = new Cell[rows][cols];
 
         int i, j;
-        // Initialising of the starting cell
         i = src.first;
         j = src.second;
         cellDetails[i][j] = new Cell();
@@ -168,27 +133,17 @@ public class AStar {
         cellDetails[i][j].h = 0.0;
         cellDetails[i][j].parent = new Pair( i, j );
 
-
-        // Creating an open list
-
-
         PriorityQueue<Details> openList = new PriorityQueue<>((o1, o2) -> (int) Math.round(o1.value - o2.value));
-
-        // Put the starting cell on the open list,   set f.startCell = 0
 
         openList.add(new Details(0.0, i, j));
 
         while (!openList.isEmpty()) {
             Details p = openList.peek();
-            // Add to the closed list
-            i = p.i; // second element of tuple
-            j = p.j; // third element of tuple
+            i = p.i;
+            j = p.j;
 
-            // Remove from the open list
             openList.poll();
             closedList[i][j] = true;
-
-            // Generating all the 8 neighbors of the cell
 
             for (int addX = -1; addX <= 1; addX++) {
                 for (int addY = -1; addY <= 1; addY++) {
@@ -213,15 +168,9 @@ public class AStar {
                             hNew = calculateHValue(neighbour, dest);
                             fNew = gNew + hNew;
 
-                            if (cellDetails[neighbour.first][neighbour.second].f == -1
-                                    || cellDetails[neighbour.first][neighbour.second].f > fNew) {
-
+                            if (cellDetails[neighbour.first][neighbour.second].f == -1 || cellDetails[neighbour.first][neighbour.second].f > fNew) {
                                 openList.add(new Details(fNew, neighbour.first, neighbour.second));
-
-                                // Update the details of this
-                                // cell
                                 cellDetails[neighbour.first][neighbour.second].g = gNew;
-//heuristic function                               cellDetails[neighbour.first][neighbour.second].h = hNew;
                                 cellDetails[neighbour.first][neighbour.second].f = fNew;
                                 cellDetails[neighbour.first][neighbour.second].parent = new Pair( i, j );
                             }
@@ -235,12 +184,7 @@ public class AStar {
         return str;
     }
 
-    // test
     public static void main(String[] args) {
-
-
-        //0: The cell is blocked
-        // 1: The cell is not blocked
 
         int[][] grid = {
                 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -294,17 +238,12 @@ public class AStar {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
 
-
-        // Start is the left-most upper-most corner
-        Pair src = new Pair(24, 44); //24, 44
-        //(8, 0);
-
-        // Destination is the right-most bottom-most corner
-        Pair dest = new Pair(5, 6); //5, 6
+        Pair src = new Pair(24, 44);
+        Pair dest = new Pair(5, 6);
 
         AStar app = new AStar();
         String str = app.aStarSearch(grid, grid.length , grid[0].length, src, dest);
-System.out.println(str);
+        System.out.println(str);
 
     }
 }

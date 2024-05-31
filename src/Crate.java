@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -16,8 +15,6 @@ public class Crate extends GameObject {
 
     public void render(Graphics g) {
         g.drawImage(crateImage, x, y, null);
-        // g.setColor(Color.cyan);
-        // g.fillRect(x, y, 32, 32);
     }
 
     public Rectangle getBounds() {

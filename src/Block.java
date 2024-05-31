@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -18,8 +17,6 @@ public class Block extends GameObject {
     @Override
     public void render(Graphics g) {
         g.drawImage(blockImage, x, y, null);
-        // g.setColor(Color.black);
-        // g.fillRect(x, y, 32, 32);
     }
 
     @Override

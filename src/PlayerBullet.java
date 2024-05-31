@@ -13,13 +13,6 @@ public class PlayerBullet extends GameObject {
         double magnitude = Math.sqrt(Math.pow(mx - px, 2) + Math.pow(my - py, 2));
          velX = ((mx - px) / magnitude) * GameConstants.bulletSpeed;
          velY = ((my - py) / magnitude) * GameConstants.bulletSpeed;
-//         double angle = Math.atan2(my - py, mx - px);
-//         velX = Math.round(GameConstants.bulletSpeed * Math.cos(angle));
-//         velY = Math.round(GameConstants.bulletSpeed * Math.sin(angle));
-        System.out.println("Rounded velX: " + velX + "  Unrounded velX: " + GameConstants.bulletSpeed * Math.cos(2));
-        System.out.println("Rounded velY: " + velY + "  Unrounded velY: " + GameConstants.bulletSpeed * Math.sin(2));
-//        velX = mx;
-//        velY = my;
     }
 
     @Override

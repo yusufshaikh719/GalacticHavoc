@@ -21,13 +21,10 @@ public class Enemy extends GameObject {
         this.handler = handler;
         this.game = game;
         aStar = new AStar();
-//        canFire = new ArrayList<>(){{canFire.add(false);}};
 
         enemyImage[0] = ss.grabImage(4, 1, 32, 32);
         enemyImage[1] = ss.grabImage(5, 1, 32, 32);
         enemyImage[2] = ss.grabImage(6, 1, 32, 32);
-
-//        intArray = game.blocks.stream().map(  u  ->  u.stream().mapToInt(i->i).toArray()  ).toArray(int[][]::new); //410624 blocks
 
         anim = new Animation(3, enemyImage[0], enemyImage[1], enemyImage[2]);
 
@@ -51,8 +48,8 @@ public class Enemy extends GameObject {
         //     System.out.println("velX: " + velX);
         //     System.out.println("vely: " + velY);
         // }
-        x += Math.round(velX);
-        y += Math.round(velY);
+        x += Math.toIntExact(Math.round(velX));
+        y += Math.toIntExact(Math.round(velY));
 
         game.enemyLoc[0] = y / 32;
         game.enemyLoc[1] = x / 32;
@@ -103,12 +100,7 @@ public class Enemy extends GameObject {
                 g.drawLine(x + 18, y + 18, temp.getX() + 16, temp.getY() + 24);
             }
             if (temp.getId() == ID.Block) {
-                if (getSightBounds().intersects(temp.getBounds())) {
-                    g.fillRect(temp.getX(), temp.getY(), 32, 32);
-//                    canFire = false;
-                } else {
-//                    canFire = true;
-                }
+                if (getSightBounds().intersects(temp.getBounds())) g.fillRect(temp.getX(), temp.getY(), 32, 32);
             }
         }
     }
