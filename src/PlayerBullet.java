@@ -10,8 +10,9 @@ public class PlayerBullet extends GameObject {
         super(x, y, id, ss);
         this.handler = handler;
 
-         velX = (float) (mx - px);
-         velY = (float) (my - py);
+        double magnitude = Math.sqrt(Math.pow(mx - px, 2) + Math.pow(my - py, 2));
+         velX = ((mx - px) / magnitude) * GameConstants.bulletSpeed;
+         velY = ((my - py) / magnitude) * GameConstants.bulletSpeed;
 //         double angle = Math.atan2(my - py, mx - px);
 //         velX = Math.round(GameConstants.bulletSpeed * Math.cos(angle));
 //         velY = Math.round(GameConstants.bulletSpeed * Math.sin(angle));
