@@ -17,7 +17,6 @@ public class Player extends GameObject {
     private long prevShootTime = 0;
     Animation anim;
     private long hitTime;
-    private boolean isHit = false;
 
     public Player(int x, int y, ID id, Handler handler, Game game, SpriteSheet ss, Camera camera) {
         super(x, y, id, ss);
@@ -65,8 +64,8 @@ public class Player extends GameObject {
                 game.ammo--;
             }
         }
-        if (!handler.isSpace() && game.ammo < 3) {
-            game.ammo += 0.005;
+        if (System.currentTimeMillis() - shootTime >= 1 && game.ammo < 3) {
+            game.ammo += 0.01;
         }
 
         for (int i = 0; i < handler.object.size(); i++) {
@@ -76,14 +75,12 @@ public class Player extends GameObject {
                     game.playerHp -= 10;
                     handler.removeObject(temp);
                     hitTime = System.currentTimeMillis();
-                    isHit = true;
                 }
             }
         }
 
-        long curr = System.currentTimeMillis();
-        if (Math.abs(curr - hitTime) >= 2000 && isHit && Math.abs(curr - shootTime) >= 2000) {
-            if (game.playerHp < 100) game.playerHp += 0.1;
+        if (Math.abs(System.currentTimeMillis() - hitTime) >= 2000 && Math.abs(System.currentTimeMillis() - shootTime) >= 2000) {
+            if (game.playerHp < game.maxHp) game.playerHp += (0.1);
         }
 
         anim.runAnimation();

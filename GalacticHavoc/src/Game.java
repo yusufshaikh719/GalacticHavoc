@@ -93,8 +93,8 @@ public class Game extends Canvas implements Runnable {
 
     public void tick() {
         if (playerHp > maxHp) playerHp = maxHp;
-        maxHp += (50 * powercubes);
-        playerDmg += (5 * powercubes);
+        maxHp = (50 * powercubes) + 100;
+        playerDmg = (5 * powercubes) + 10;
 
         for (int i = 0; i < handler.object.size(); i++) {
             if (handler.object.get(i).getId() == ID.Player) {
