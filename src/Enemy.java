@@ -1,3 +1,5 @@
+import org.w3c.dom.css.Rect;
+
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
@@ -35,19 +37,29 @@ public class Enemy extends GameObject {
         AStar.Pair dest = new AStar.Pair(game.playerLoc[0], game.playerLoc[1]);
 
         String str = aStar.aStarSearch(game.grid, game.grid.length , game.grid[0].length, src, dest);
-        // System.out.println("Pure string: " + str);
-        // if (str.contains("(")) {
-        //     int commaPos = str.indexOf(',');
-        //     int closeParanthesisPos = str.indexOf(')');
-        //     int newyPos = Integer.parseInt(str.substring(41, commaPos)); //736 / 32
-        //     int newxPos = Integer.parseInt(str.substring(commaPos + 1, closeParanthesisPos)); //1376 / 32
-        //     System.out.println("go to xpos: " + newxPos * 32 + "  curr xpos: " + x);
-        //     System.out.println("go to ypos: " + newyPos * 32 + "  curr ypos: " + y);
-        //     velX = (newxPos * 32 - x) / 16.0f; // (736 - 1408 / 200)
-        //     velY = (newyPos * 32 - y) / 16.0f;
-        //     System.out.println("velX: " + velX);
-        //     System.out.println("vely: " + velY);
-        // }
+         System.out.println("Pure string: " + str);
+         if (str.contains("(")) {
+             int commaPos = str.indexOf(',');
+             int closeParanthesisPos = str.indexOf(')');
+             int newyPos = Integer.parseInt(str.substring(41, commaPos)); //736 / 32
+             int newxPos = Integer.parseInt(str.substring(commaPos + 1, closeParanthesisPos)); //1376 / 32
+             System.out.println("go to xpos: " + newxPos * 32 + "  curr xpos: " + x);
+             System.out.println("go to ypos: " + newyPos * 32 + "  curr ypos: " + y);
+//             velX = (newxPos * 32 - x) / 16.0f; // (736 - 1408 / 200)
+//             velY = (newyPos * 32 - y) / 16.0f;
+             double magnitude = Math.sqrt(Math.pow(newxPos - x, 2) + Math.pow(newyPos - y, 2));
+             velX = ((newxPos * 32 - x) / magnitude) * 80;
+             velY = ((newyPos * 32 - y) / magnitude) * 80;
+             if (velX > 0.01 && velX <= 1) velX = 1;
+             else if (velX < -0.01 && velX >= -1) velX = -1;
+             if (velY > 0.01 && velY <= 1) velY = 1;
+             else if (velY < -0.01 && velY >= -1) velY = -1;
+             System.out.println("Magnitude: " + magnitude);
+             System.out.println("velX: " + velX);
+             System.out.println("vely: " + velX);
+             System.out.println("velX: " + Math.toIntExact(Math.round(velX)));
+             System.out.println("vely: " + Math.toIntExact(Math.round(velX)));
+         }
         x += Math.toIntExact(Math.round(velX));
         y += Math.toIntExact(Math.round(velY));
 
@@ -67,6 +79,11 @@ public class Enemy extends GameObject {
             if (temp.getId() == ID.Block) {
                 if (getSightBounds().intersects(temp.getBounds()));
                 canFire = false;
+                Rectangle block = new Rectangle(temp.getX() - 16, temp.getY() - 16, 64, 64);
+                if (getBounds().intersects(temp.getBounds())) {
+                    x += Math.toIntExact(Math.round(velX * -1));
+                    y += Math.toIntExact(Math.round(velY * -1));
+                }
             }
             if (temp.getId() == ID.Player) {
                 time = System.currentTimeMillis();
