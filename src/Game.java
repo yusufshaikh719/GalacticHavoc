@@ -22,7 +22,7 @@ public class Game extends Canvas implements Runnable {
     public double maxHp = 100;
     public int playerDmg = 10;
 
-    public int[][] grid = new int[36][64];
+    public int[][] grid = new int[1152][2048];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
 
@@ -142,7 +142,11 @@ public class Game extends Canvas implements Runnable {
 
                 if (red == 255) {
                     handler.addObject(new Block(i*32, j*32, ID.Block, ss));
-                    grid[j][i] = 0;
+                    for (int p = 0; p < 32; p++) {
+                        for (int l = 0; l < 32; l++) {
+                            grid[j*32 + p][i*32 + l] = 0;
+                        }
+                    }
                 }
                 if (green == 255 && blue == 76) {
                     handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, ss, this));
@@ -155,9 +159,15 @@ public class Game extends Canvas implements Runnable {
                     playerLoc[1] = i;
                 }
                 if (blue == 255 && green == 255) {
-                    handler.addObject(new Crate(i*32, j*32, ID.Crate, ss));
+                    handler.addObject(new Crate(i*32, j*32, ID.Crate, ss, handler, this));
                 }
             }
+        }
+        for (int p = 0; p < grid.length; p++) {
+            for (int l = 0; l < grid[0].length; l++) {
+                System.out.print(grid[p][l]);
+            }
+            System.out.println();
         }
     }
 

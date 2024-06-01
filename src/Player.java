@@ -78,7 +78,7 @@ public class Player extends GameObject {
         }
 
         if (Math.abs(System.currentTimeMillis() - hitTime) >= 2000 && Math.abs(System.currentTimeMillis() - shootTime) >= 2000) {
-            if (game.playerHp < game.maxHp) game.playerHp += (0.1);
+            if (game.playerHp < game.maxHp) game.playerHp += (0.001 * game.maxHp);
         }
 
         anim.runAnimation();
@@ -95,7 +95,7 @@ public class Player extends GameObject {
         g.setColor(Color.gray);
         g.fillRect(x - 9, y - 20, 50, 10);
         g.setColor(Color.green);
-        g.fillRect(x - 9, y - 20, (int) (game.playerHp/2), 10);
+        g.fillRect(x - 9, y - 20, (int) (game.playerHp/(game.maxHp/50)), 10);
         g.setColor(Color.black);
         g.drawRect(x - 9, y - 20, 50, 10);
 
@@ -127,13 +127,6 @@ public class Player extends GameObject {
                 if (getBounds().intersects(temp.getBounds())) {
                     x += Math.toIntExact(Math.round(velX * -1));
                     y += Math.toIntExact(Math.round(velY * -1));
-                }
-            }
-
-            if (temp.getId() == ID.Crate) {
-                if (getBounds().intersects(temp.getBounds())) {
-                    game.powercubes++;
-                    handler.removeObject(temp);
                 }
             }
 
