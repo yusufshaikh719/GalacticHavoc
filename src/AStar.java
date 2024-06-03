@@ -103,22 +103,21 @@ public class AStar {
             return "Source is invalid...";
         }
 
-
         if (!isValid(grid, rows, cols, dest)) {
             return "Destination is invalid...";
         }
 
-
-        if (!isUnBlocked(grid, rows, cols, src)
-                || !isUnBlocked(grid, rows, cols, dest)) {
-            return "Source or destination is blocked...";
+        if (!isUnBlocked(grid, rows, cols, dest)) {
+            return "Destination is blocked...";
         }
 
+        if (!isUnBlocked(grid, rows, cols, src)) {
+            return "Source is blocked...";
+        }
 
         if (isDestination(src, dest)) {
             return "We're already here...";
         }
-
 
         boolean[][] closedList = new boolean[rows][cols];
 

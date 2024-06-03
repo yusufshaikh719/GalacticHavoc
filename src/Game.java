@@ -1,5 +1,4 @@
 import java.awt.image.*;
-import java.util.ArrayList;
 import java.awt.*;
 
 public class Game extends Canvas implements Runnable {
@@ -10,9 +9,9 @@ public class Game extends Canvas implements Runnable {
     private SpriteSheet ss;
 
     private BufferedImage scene_1 = null;
+    private BufferedImage scene_1_scaled = null;
     private BufferedImage sprite_sheet = null;
     private BufferedImage floor = null;
-    private BufferedImage pcImage = null;
 
     public double ammo = 3;
     public double playerHp = 100;
@@ -40,12 +39,13 @@ public class Game extends Canvas implements Runnable {
 
         ImageLoader loader = new ImageLoader();
         scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
+        scene_1_scaled = loader.loadImage("/Assets/compsci_scene_1_scaled.png");
         sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
 
         ss = new SpriteSheet(sprite_sheet);
         floor = ss.grabImage(4, 2, 32, 32);
 
-        loadLevel(scene_1);
+        loadLevel(scene_1, scene_1_scaled);
     }
 
     public void run() {
@@ -129,9 +129,11 @@ public class Game extends Canvas implements Runnable {
         bs.show();
     }
 
-    private void loadLevel(BufferedImage image) {
+    private void loadLevel(BufferedImage image, BufferedImage img2) {
         int w = image.getWidth();
         int h = image.getHeight();
+        int w2 = img2.getWidth();
+        int h2 = img2.getHeight();
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -142,32 +144,40 @@ public class Game extends Canvas implements Runnable {
 
                 if (red == 255) {
                     handler.addObject(new Block(i*32, j*32, ID.Block, ss));
-                    for (int p = 0; p < 32; p++) {
-                        for (int l = 0; l < 32; l++) {
-                            grid[j*32 + p][i*32 + l] = 0;
-                        }
-                    }
                 }
                 if (green == 255 && blue == 76) {
                     handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, ss, this));
-                    enemyLoc[0] = j;
-                    enemyLoc[1] = i;
+                    enemyLoc[0] = (j*32);
+                    enemyLoc[1] = (i*32);
+                    System.out.println("Enemy location: " + enemyLoc[1] + ", " + enemyLoc[0]);
                 }
                 if (blue == 255 && green == 54) {
                     handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, ss, camera));
-                    playerLoc[0] = j;
-                    playerLoc[1] = i;
+                    playerLoc[0] = (j*32);
+                    playerLoc[1] = (i*32);
+                    System.out.println("Player location: " + playerLoc[1] + ", " + playerLoc[0]);
                 }
                 if (blue == 255 && green == 255) {
                     handler.addObject(new Crate(i*32, j*32, ID.Crate, ss, handler, this));
                 }
             }
         }
-        for (int p = 0; p < grid.length; p++) {
-            for (int l = 0; l < grid[0].length; l++) {
-                System.out.print(grid[p][l]);
+
+
+        for (int i = 0; i < w2; i++) {
+            for (int j = 0; j < h2; j++) {
+                int pixel = img2.getRGB(i, j);
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
+
+                if (red == 255 && blue == 0 && green == 0) {
+                    grid[j][i] = 0;
+                }
+                if (blue == 255 && red == 0 && green == 0) {
+                    grid[j][i] = 0;
+                }
             }
-            System.out.println();
         }
     }
 
