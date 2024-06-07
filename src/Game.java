@@ -24,6 +24,7 @@ public class Game extends Canvas implements Runnable {
     public int[][] grid = new int[1152][2048];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
+    private double fps;
 
     public Game() {
         new Window(GameConstants.screenWidth, GameConstants.screenHeight, "Galactic Havoc", this);
@@ -55,22 +56,41 @@ public class Game extends Canvas implements Runnable {
         double delta = 0;
         long timer = System.currentTimeMillis();
         int frames = 0;
+        long frameTime = (long) (1000 / 60.0);
+
         while (isRunning) {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
+
             while (delta >= 1) {
-                tick();
+                tick(); // Update game logic
                 delta--;
             }
-            render();
+
+            render(); // Render the game frame
             frames++;
 
-            if (System.currentTimeMillis() - timer > 1000) {
+            // Sleep to maintain frame rate
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = currentTime - (timer + frames * frameTime);
+            long sleepTime = frameTime - elapsedTime;
+
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (currentTime - timer > 1000) {
                 timer += 1000;
+                System.out.println("FPS: " + frames); // Output the frame rate
                 frames = 0;
             }
         }
+
         stop();
     }
 
@@ -122,6 +142,9 @@ public class Game extends Canvas implements Runnable {
         }
 
         handler.render(g);
+
+        g.setColor(Color.white);
+        g.drawString("Fps: " + fps, 1000, 600);
 
         g2.translate(camera.getX(), camera.getY());
 
