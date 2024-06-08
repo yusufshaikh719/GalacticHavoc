@@ -22,7 +22,7 @@ public class Game extends Canvas implements Runnable {
     public double maxHp = 100;
     public int playerDmg = 10;
 
-    public int[][] grid = new int[36][64];
+    public int[][] grid = new int[1152][2048];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
     private double fps;
@@ -47,7 +47,7 @@ public class Game extends Canvas implements Runnable {
         ss = new SpriteSheet(sprite_sheet);
         floor = ss.grabImage(4, 2, 32, 32);
 
-        loadLevel(scene_1);
+        loadLevel(scene_1, scene_1_scaled);
     }
 
     public void run() {
@@ -57,22 +57,41 @@ public class Game extends Canvas implements Runnable {
         double delta = 0;
         long timer = System.currentTimeMillis();
         int frames = 0;
+        long frameTime = (long) (1000 / 60.0);
+
         while (isRunning) {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
+
             while (delta >= 1) {
-                tick();
+                tick(); // Update game logic
                 delta--;
             }
-            render();
+
+            render(); // Render the game frame
             frames++;
 
-            if (System.currentTimeMillis() - timer > 1000) {
+            // Sleep to maintain frame rate
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = currentTime - (timer + frames * frameTime);
+            long sleepTime = frameTime - elapsedTime;
+
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (currentTime - timer > 1000) {
                 timer += 1000;
+                System.out.println("FPS: " + frames); // Output the frame rate
                 frames = 0;
             }
         }
+
         stop();
     }
 
@@ -133,9 +152,11 @@ public class Game extends Canvas implements Runnable {
         bs.show();
     }
 
-    private void loadLevel(BufferedImage image) {
+    private void loadLevel(BufferedImage image, BufferedImage img2) {
         int w = image.getWidth();
         int h = image.getHeight();
+        int w2 = img2.getWidth();
+        int h2 = img2.getHeight();
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
@@ -146,7 +167,6 @@ public class Game extends Canvas implements Runnable {
 
                 if (red == 255) {
                     handler.addObject(new Block(i*32, j*32, ID.Block, ss));
-                    grid[j][i] = 0;
                 }
                 if (green == 255 && blue == 76) {
                     handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, ss, this));

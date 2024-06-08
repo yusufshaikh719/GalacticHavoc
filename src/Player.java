@@ -36,8 +36,8 @@ public class Player extends GameObject {
         x += Math.toIntExact(Math.round(velX));
         y += Math.toIntExact(Math.round(velY));
 
-        game.playerLoc[0] = y / 32;
-        game.playerLoc[1] = x / 32;
+        game.playerLoc[0] = y;
+        game.playerLoc[1] = x;
 
         collision();
 
