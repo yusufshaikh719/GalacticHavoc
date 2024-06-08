@@ -11,9 +11,9 @@ public class Player extends GameObject {
     private BufferedImage[] playerimage = new BufferedImage[3];
     private BufferedImage pcImage;
     Camera camera;
+    Animation anim;
     private long shootTime;
     private long prevShootTime = 0;
-    Animation anim;
     private long hitTime;
 
     public Player(int x, int y, ID id, Handler handler, Game game, SpriteSheet ss, Camera camera) {
@@ -55,15 +55,15 @@ public class Player extends GameObject {
 
         if (handler.isSpace()) {
             shootTime = System.currentTimeMillis();
-            if (shootTime - prevShootTime >= 400 && game.ammo >= 1) {
+            if (shootTime - prevShootTime >= 400 && game.playerAmmo >= 1) {
                 prevShootTime = shootTime;
                 shootTime = System.currentTimeMillis();
                 handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), x, y, ss));
-                game.ammo--;
+                game.playerAmmo--;
             }
         }
-        if (System.currentTimeMillis() - shootTime >= 1 && game.ammo < 3) {
-            game.ammo += 0.01;
+        if (System.currentTimeMillis() - shootTime >= 1 && game.playerAmmo < 3) {
+            game.playerAmmo += 0.01;
         }
 
         for (int i = 0; i < handler.object.size(); i++) {
@@ -78,7 +78,7 @@ public class Player extends GameObject {
         }
 
         if (Math.abs(System.currentTimeMillis() - hitTime) >= 2000 && Math.abs(System.currentTimeMillis() - shootTime) >= 2000) {
-            if (game.playerHp < game.maxHp) game.playerHp += (0.1);
+            if (game.playerHp < game.maxHp) game.playerHp += (0.001 * game.maxHp);
         }
 
         anim.runAnimation();
@@ -95,13 +95,13 @@ public class Player extends GameObject {
         g.setColor(Color.gray);
         g.fillRect(x - 9, y - 20, 50, 10);
         g.setColor(Color.green);
-        g.fillRect(x - 9, y - 20, (int) (game.playerHp/2), 10);
+        g.fillRect(x - 9, y - 20, (int) (game.playerHp/(game.maxHp/50)), 10);
         g.setColor(Color.black);
         g.drawRect(x - 9, y - 20, 50, 10);
 
         //ammo
         g.setColor(Color.orange);
-        g.fillRect(x - 11, y - 8, (int) (game.ammo * 18), 5);
+        g.fillRect(x - 11, y - 8, (int) (game.playerAmmo * 18), 5);
         g.setColor(Color.black);
         g.drawRect(x - 11, y - 8, 18, 5);
         g.drawRect(x + 7, y - 8, 18, 5);
@@ -127,13 +127,6 @@ public class Player extends GameObject {
                 if (getBounds().intersects(temp.getBounds())) {
                     x += Math.toIntExact(Math.round(velX * -1));
                     y += Math.toIntExact(Math.round(velY * -1));
-                }
-            }
-
-            if (temp.getId() == ID.Crate) {
-                if (getBounds().intersects(temp.getBounds())) {
-                    game.powercubes++;
-                    handler.removeObject(temp);
                 }
             }
 

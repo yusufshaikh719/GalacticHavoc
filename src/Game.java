@@ -1,5 +1,4 @@
 import java.awt.image.*;
-import java.util.ArrayList;
 import java.awt.*;
 
 public class Game extends Canvas implements Runnable {
@@ -10,11 +9,12 @@ public class Game extends Canvas implements Runnable {
     private SpriteSheet ss;
 
     private BufferedImage scene_1 = null;
+    private BufferedImage scene_1_scaled = null;
     private BufferedImage sprite_sheet = null;
     private BufferedImage floor = null;
-    private BufferedImage pcImage = null;
 
-    public double ammo = 3;
+    public double playerAmmo = 3;
+    public double enemyAmmo = 3;
     public double playerHp = 100;
 
     public int enemyHp = 100;
@@ -25,6 +25,7 @@ public class Game extends Canvas implements Runnable {
     public int[][] grid = new int[36][64];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
+    private double fps;
 
     public Game() {
         new Window(GameConstants.screenWidth, GameConstants.screenHeight, "Galactic Havoc", this);
@@ -40,6 +41,7 @@ public class Game extends Canvas implements Runnable {
 
         ImageLoader loader = new ImageLoader();
         scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
+        scene_1_scaled = loader.loadImage("/Assets/compsci_scene_1_scaled.png");
         sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
 
         ss = new SpriteSheet(sprite_sheet);
@@ -123,6 +125,8 @@ public class Game extends Canvas implements Runnable {
 
         handler.render(g);
 
+        g.setColor(Color.white);
+
         g2.translate(camera.getX(), camera.getY());
 
         g.dispose();
@@ -146,19 +150,26 @@ public class Game extends Canvas implements Runnable {
                 }
                 if (green == 255 && blue == 76) {
                     handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, ss, this));
-                    enemyLoc[0] = j;
-                    enemyLoc[1] = i;
+                    enemyLoc[0] = (j);
+                    enemyLoc[1] = (i);
                 }
                 if (blue == 255 && green == 54) {
                     handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, ss, camera));
-                    playerLoc[0] = j;
-                    playerLoc[1] = i;
+                    playerLoc[0] = (j);
+                    playerLoc[1] = (i);
                 }
                 if (blue == 255 && green == 255) {
-                    handler.addObject(new Crate(i*32, j*32, ID.Crate, ss));
+                    handler.addObject(new Crate(i*32, j*32, ID.Crate, ss, handler, this));
                 }
             }
         }
+
+//        for (int i = 0; i < grid.length; i++) {
+//            for (int j = 0; j < grid[0].length; j++) {
+//                System.out.print(grid[i][j]);
+//            }
+//            System.out.println();
+//        }
     }
 
     public static void main(String[] args) {
