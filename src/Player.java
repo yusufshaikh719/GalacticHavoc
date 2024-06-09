@@ -6,12 +6,12 @@ import java.awt.image.BufferedImage;
 
 public class Player extends GameObject {
 
-    Handler handler;
-    Game game;
+    private Handler handler;
+    private Game game;
+    private Camera camera;
+    private Animation anim;
     private BufferedImage[] playerimage = new BufferedImage[3];
     private BufferedImage pcImage;
-    Camera camera;
-    Animation anim;
     private long shootTime;
     private long prevShootTime = 0;
     private long hitTime;

@@ -5,14 +5,10 @@ import java.awt.Rectangle;
 public class EnemyBullet extends GameObject {
 
     private Handler handler;
-    Game game;
-    private long hitTime;
-    private boolean ishit = false;
 
-    public EnemyBullet(int x, int y, ID id, Handler handler, SpriteSheet ss, double angle, Game game) {
+    public EnemyBullet(int x, int y, ID id, Handler handler, SpriteSheet ss, double angle) {
         super(x, y, id, ss);
         this.handler = handler;
-        this.game = game;
 
         velX = (int) (GameConstants.bulletSpeed * Math.cos(angle));
         velY = (int) (GameConstants.bulletSpeed * Math.sin(angle));

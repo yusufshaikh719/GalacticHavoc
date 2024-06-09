@@ -5,14 +5,14 @@ import java.util.ArrayList;
 //import javafx.scene.shape.*;
 
 public class Enemy extends GameObject {
-    Handler handler;
+    private Handler handler;
     private BufferedImage[] enemyImage = new BufferedImage[3];
-    Animation anim;
-    Game game;
-    AStar aStar;
-    int gotoX;
-    int gotoY;
-    double magnitude;
+    private Animation anim;
+    private Game game;
+    private AStar aStar;
+    private int gotoX;
+    private int gotoY;
+    private double magnitude;
     private long shootTime;
     private long hitTime;
     private boolean canFire;
@@ -102,10 +102,9 @@ public class Enemy extends GameObject {
                     shootTime = System.currentTimeMillis();
                     double angle = Math.atan2(temp.getY() - y, temp.getX() - x);
                     for (int j = 0; j < 5; j++) {
-                        handler.addObject(new EnemyBullet(x + 16, y + 24, ID.EnemyBullet, handler, ss, angle + (j / 10.0), game));
-                        handler.addObject(new EnemyBullet(x + 16, y + 24, ID.EnemyBullet, handler, ss, angle - (j / 10.0), game));
+                        handler.addObject(new EnemyBullet(x + 16, y + 24, ID.EnemyBullet, handler, ss, angle + (j / 10.0)));
+                        handler.addObject(new EnemyBullet(x + 16, y + 24, ID.EnemyBullet, handler, ss, angle - (j / 10.0)));
                     }
-                    System.out.println("angle: " + angle);
                     game.enemyAmmo--;
                 }
             }
@@ -143,19 +142,6 @@ public class Enemy extends GameObject {
         g.fillRect(x - 9, y - 10, (int) (game.enemyHp/(game.enemyMaxHP / 50)), 10);
         g.setColor(Color.black);
         g.drawRect(x - 9, y - 10, 50, 10);
-
-        // Sight Line
-//        for (int i = 0; i < handler.object.size(); i++) {
-//            GameObject temp = handler.object.get(i);
-//            if (temp.getId() == ID.Player) {
-//                g.drawLine(x + 18, y + 18, temp.getX() + 16, temp.getY() + 24);
-//            }
-//            if (temp.getId() == ID.Block) {
-//                if (getSightBounds().intersects(temp.getBounds())) {
-//                    g.fillRect(temp.getX(), temp.getY(), 32, 32);
-//                }
-//            }
-//        }
     }
 
     public Rectangle getBounds() {
@@ -174,9 +160,5 @@ public class Enemy extends GameObject {
             }
         }
         return null;
-    }
-
-    public Rectangle getBoundsBig() {
-        return new Rectangle(x - 16, y - 16, 64, 64);
     }
 }

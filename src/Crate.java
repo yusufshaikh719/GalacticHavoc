@@ -2,11 +2,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Crate extends GameObject {
+    private Handler handler;
+    private Game game;
     private BufferedImage crateImage;
-
     private int hp;
-    Handler handler;
-    Game game;
 
     public Crate(int x, int y, ID id, SpriteSheet ss, Handler handler, Game game) {
         super(x, y, id, ss);

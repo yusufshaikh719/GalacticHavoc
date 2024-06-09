@@ -2,7 +2,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Handler {
-    ArrayList<GameObject> object = new ArrayList<>();
+    public ArrayList<GameObject> object = new ArrayList<>();
     private boolean up = false, down = false, right = false, left = false, space = false;
 
     public void tick() {
