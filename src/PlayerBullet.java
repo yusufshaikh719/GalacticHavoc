@@ -32,7 +32,7 @@ public class PlayerBullet extends GameObject {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.green);
+        g.setColor(Color.blue);
         g.fillOval(x, y, 8, 8);
     }
 

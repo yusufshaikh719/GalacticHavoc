@@ -13,14 +13,15 @@ public class Game extends Canvas implements Runnable {
     private BufferedImage sprite_sheet = null;
     private BufferedImage floor = null;
 
-    public double playerAmmo = 3;
-    public double enemyAmmo = 3;
-    public double playerHp = 100;
-
-    public int enemyHp = 100;
     public int powercubes = 0;
-    public double maxHp = 100;
+    public double playerAmmo = 3;
+    public double playerHp = 100;
+    public double playerMaxHP = 100;
     public int playerDmg = 10;
+
+    public double enemyAmmo = 3;
+    public double enemyHp = 300;
+    public double enemyMaxHP = 300;
 
     public int[][] grid = new int[36][64];
     public int[] enemyLoc = new int[2];
@@ -92,8 +93,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void tick() {
-        if (playerHp > maxHp) playerHp = maxHp;
-        maxHp = (50 * powercubes) + 100;
+        if (playerHp > playerMaxHP) playerHp = playerMaxHP;
+        playerMaxHP = (50 * powercubes) + 100;
         playerDmg = (5 * powercubes) + 10;
 
         for (int i = 0; i < handler.object.size(); i++) {
@@ -163,13 +164,6 @@ public class Game extends Canvas implements Runnable {
                 }
             }
         }
-
-//        for (int i = 0; i < grid.length; i++) {
-//            for (int j = 0; j < grid[0].length; j++) {
-//                System.out.print(grid[i][j]);
-//            }
-//            System.out.println();
-//        }
     }
 
     public static void main(String[] args) {
