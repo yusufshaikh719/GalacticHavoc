@@ -1,12 +1,10 @@
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-//import javafx.scene.shape.*;
 
 public class Enemy extends GameObject {
     private Handler handler;
-    private BufferedImage[] enemyImage = new BufferedImage[3];
+    private BufferedImage[] enemyImage = new BufferedImage[4];
     private Animation anim;
     private Game game;
     private AStar aStar;
@@ -25,10 +23,11 @@ public class Enemy extends GameObject {
 
         shootTime = System.currentTimeMillis();
 
-        enemyImage[0] = ss.grabImage(4, 1, 32, 32);
-        enemyImage[1] = ss.grabImage(5, 1, 32, 32);
-        enemyImage[2] = ss.grabImage(6, 1, 32, 32);
-        anim = new Animation(3, enemyImage[0], enemyImage[1], enemyImage[2]);
+        enemyImage[0] = ss.grabImage64(1, 1, 64, 64);
+        enemyImage[1] = ss.grabImage64(2, 1, 64, 64);
+        enemyImage[2] = ss.grabImage64(3, 1, 64, 64);
+        enemyImage[3] = ss.grabImage64(4, 1, 64, 64);
+        anim = new Animation(3, enemyImage[0], enemyImage[1], enemyImage[2], enemyImage[3]);
     }
 
     public void tick() {
@@ -98,7 +97,8 @@ public class Enemy extends GameObject {
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
             if (temp.getId() == ID.Player) {
-                if (System.currentTimeMillis() - shootTime >= 2000 && game.enemyAmmo >= 1 && canFire) {
+                double dist = Math.sqrt(Math.pow(temp.getX() - x, 2) +  Math.pow(temp.getY() - y, 2));
+                if (System.currentTimeMillis() - shootTime >= 1000 && game.enemyAmmo >= 1 && canFire && dist <= 576) {
                     shootTime = System.currentTimeMillis();
                     double angle = Math.atan2(temp.getY() - y, temp.getX() - x);
                     for (int j = 0; j < 5; j++) {
@@ -131,11 +131,10 @@ public class Enemy extends GameObject {
     }
 
     public void render(Graphics g) {
-//        anim.drawAnimation(g, x, y, 0);
-        g.setColor(Color.yellow);
-        g.fillRect(x, y, 32, 32);
+        g.drawImage(enemyImage[0], x - 15, y - 22, null);
+//        anim.drawAnimation(g, x - 15, y - 22, 0);
 
-        //health bar
+        //heath
         g.setColor(Color.gray);
         g.fillRect(x - 9, y - 10, 50, 10);
         g.setColor(Color.green);

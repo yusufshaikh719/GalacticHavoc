@@ -1,5 +1,9 @@
+import javax.swing.*;
 import java.awt.image.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class Game extends Canvas implements Runnable {
     private boolean isRunning = false;
@@ -7,9 +11,12 @@ public class Game extends Canvas implements Runnable {
     private Handler handler;
     private Camera camera;
     private SpriteSheet ss;
+    private SpriteSheet playerSS;
+    private SpriteSheet enemySS;
 
     private BufferedImage scene_1 = null;
-    private BufferedImage scene_1_scaled = null;
+    private BufferedImage fox_sprite_sheet = null;
+    private BufferedImage bird_sprite_sheet = null;
     private BufferedImage sprite_sheet = null;
     private BufferedImage floor = null;
 
@@ -26,7 +33,8 @@ public class Game extends Canvas implements Runnable {
     public int[][] grid = new int[36][64];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
-    private double fps;
+    public boolean end;
+    private Font font;
 
     public Game() {
         new Window(GameConstants.screenWidth, GameConstants.screenHeight, "Galactic Havoc", this);
@@ -39,14 +47,17 @@ public class Game extends Canvas implements Runnable {
         handler = new Handler();
         camera = new Camera(0, 0);
         this.addKeyListener(new KeyInput(handler));
-
         ImageLoader loader = new ImageLoader();
         scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
-        scene_1_scaled = loader.loadImage("/Assets/compsci_scene_1_scaled.png");
         sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
+        fox_sprite_sheet = loader.loadImage("/Assets/link-spritesheet_scaled.png");
+        bird_sprite_sheet = loader.loadImage("/Assets/BIRDSPRITESHEET_scaled.png");
 
+        font = new Font("SansSerif", Font.BOLD, 100);
         ss = new SpriteSheet(sprite_sheet);
-        floor = ss.grabImage(4, 2, 32, 32);
+        playerSS = new SpriteSheet(fox_sprite_sheet);
+        enemySS = new SpriteSheet(bird_sprite_sheet);
+        floor = ss.grabImage32(4, 2, 32, 32);
 
         loadLevel(scene_1);
     }
@@ -93,10 +104,6 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void tick() {
-        if (playerHp > playerMaxHP) playerHp = playerMaxHP;
-        playerMaxHP = (50 * powercubes) + 100;
-        playerDmg = (5 * powercubes) + 10;
-
         for (int i = 0; i < handler.object.size(); i++) {
             if (handler.object.get(i).getId() == ID.Player) {
                 camera.tick(handler.object.get(i));
@@ -126,7 +133,13 @@ public class Game extends Canvas implements Runnable {
 
         handler.render(g);
 
-        g.setColor(Color.white);
+        if (end) {
+            g.setColor(Color.red);
+            g.fillRect(0, 0, (int) (GameConstants.screenWidth + camera.getX()), (int) (GameConstants.screenHeight + camera.getY()));
+            g.setColor(Color.black);
+            g.setFont(font);
+            g.drawString("DEFEAT", (int) (GameConstants.screenWidth + camera.getX()) / 2, (int) (GameConstants.screenHeight + camera.getY()) / 2);
+        }
 
         g2.translate(camera.getX(), camera.getY());
 
@@ -150,12 +163,12 @@ public class Game extends Canvas implements Runnable {
                     grid[j][i] = 0;
                 }
                 if (green == 255 && blue == 76) {
-                    handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, ss, this));
+                    handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, enemySS, this));
                     enemyLoc[0] = (j);
                     enemyLoc[1] = (i);
                 }
                 if (blue == 255 && green == 54) {
-                    handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, ss, camera));
+                    handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, playerSS, camera));
                     playerLoc[0] = (j);
                     playerLoc[1] = (i);
                 }

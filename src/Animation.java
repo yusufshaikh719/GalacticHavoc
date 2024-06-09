@@ -11,15 +11,17 @@ public class Animation {
     private BufferedImage img1;
     private BufferedImage img2;
     private BufferedImage img3;
+    private BufferedImage img4;
 
     private BufferedImage currentImg;
 
-    public Animation(int speed, BufferedImage img1, BufferedImage img2, BufferedImage img3) {
+    public Animation(int speed, BufferedImage img1, BufferedImage img2, BufferedImage img3, BufferedImage img4) {
         this.speed = speed;
         this.img1 = img1;
         this.img2 = img2;
         this.img3 = img3;
-        frames = 3;
+        this.img4 = img4;
+        frames = 4;
     }
 
     public void runAnimation() {
@@ -33,13 +35,15 @@ public class Animation {
     public void nextFrame() {
 
         switch (frames) {
-            case 3:
+            case 4:
                 if(count == 0)
                     currentImg = img1;
                 if(count == 1)
                     currentImg = img2;
                 if(count == 2)
                     currentImg = img3;
+                if(count == 4)
+                    currentImg = img4;
 
                 count++;
 

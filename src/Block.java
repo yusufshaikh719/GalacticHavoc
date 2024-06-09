@@ -8,7 +8,7 @@ public class Block extends GameObject {
     public Block(int x, int y, ID id, SpriteSheet ss) {
         super(x, y, id, ss);
 
-        blockImage = ss.grabImage(5, 2, 32, 32);
+        blockImage = ss.grabImage32(5, 2, 32, 32);
     }
 
     public void tick() {
