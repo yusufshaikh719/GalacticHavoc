@@ -143,8 +143,6 @@ public class Game extends Canvas implements Runnable {
             g.setColor(Color.black);
             g.setFont(font);
             g.drawString("VICTORY", (int) (GameConstants.screenWidth + camera.getX()) / 2, (int) (GameConstants.screenHeight + camera.getY()) / 2);
-
-
         }
 
         g2.translate(camera.getX(), camera.getY());

@@ -108,7 +108,7 @@ public class Player extends GameObject {
         if (Math.abs(System.currentTimeMillis() - hitTime) >= 2000 && Math.abs(System.currentTimeMillis() - shootTime) >= 2000) {
             if (game.playerHp < game.playerMaxHP) game.playerHp += (0.001 * game.playerMaxHP);
         }
-
+        
         // Updating position
         x += Math.toIntExact(Math.round(velX));
         y += Math.toIntExact(Math.round(velY));
@@ -126,7 +126,14 @@ public class Player extends GameObject {
 
     @Override
     public void render(Graphics g) {
-        if (velX == 0 && velY == 0) g.drawImage(playerimage[0], x, y, null);
+        if (velX == 0 && velY == 0) {
+            switch (lastPressed) {
+                case "down" -> g.drawImage(playerimage[0], x, y, null);
+                case "left" -> g.drawImage(playerimage[4], x, y, null);
+                case "up" -> g.drawImage(playerimage[8], x, y, null);
+                case "right" -> g.drawImage(playerimage[12], x, y, null);
+            }
+        }
         else if (lastPressed.equals("down")) animDown.drawAnimation(g, x, y, 0);
         else if (lastPressed.equals("left")) animLeft.drawAnimation(g, x, y, 0);
         else if (lastPressed.equals("up")) animUp.drawAnimation(g, x, y, 0);
