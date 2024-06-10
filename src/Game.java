@@ -1,9 +1,5 @@
-import javax.swing.*;
 import java.awt.image.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 public class Game extends Canvas implements Runnable {
     private boolean isRunning = false;
@@ -33,7 +29,8 @@ public class Game extends Canvas implements Runnable {
     public int[][] grid = new int[36][64];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
-    public boolean end;
+    public boolean endDefeat;
+    public boolean endVictory;
     private Font font;
 
     public Game() {
@@ -133,12 +130,21 @@ public class Game extends Canvas implements Runnable {
 
         handler.render(g);
 
-        if (end) {
+        if (endDefeat) {
             g.setColor(Color.red);
             g.fillRect(0, 0, (int) (GameConstants.screenWidth + camera.getX()), (int) (GameConstants.screenHeight + camera.getY()));
             g.setColor(Color.black);
             g.setFont(font);
             g.drawString("DEFEAT", (int) (GameConstants.screenWidth + camera.getX()) / 2, (int) (GameConstants.screenHeight + camera.getY()) / 2);
+        }
+        if (endVictory) {
+            g.setColor(Color.green);
+            g.fillRect(0, 0, (int) (GameConstants.screenWidth + camera.getX()), (int) (GameConstants.screenHeight + camera.getY()));
+            g.setColor(Color.black);
+            g.setFont(font);
+            g.drawString("VICTORY", (int) (GameConstants.screenWidth + camera.getX()) / 2, (int) (GameConstants.screenHeight + camera.getY()) / 2);
+
+
         }
 
         g2.translate(camera.getX(), camera.getY());

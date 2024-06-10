@@ -116,7 +116,7 @@ public class Player extends GameObject {
         game.playerLoc[0] = y / 32;
         game.playerLoc[1] = x / 32;
 
-        if (game.playerHp <= 0) game.end = true;
+        if (game.playerHp <= 0) game.endDefeat = true;
 
         animDown.runAnimation();
         animLeft.runAnimation();

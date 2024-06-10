@@ -126,7 +126,10 @@ public class Enemy extends GameObject {
         game.enemyLoc[0] = y / 32;
         game.enemyLoc[1] = x / 32;
 
-        if (game.enemyHp <= 0) handler.removeObject(this);
+        if (game.enemyHp <= 0) {
+            handler.removeObject(this);
+            game.endVictory = true;
+        }
         anim.runAnimation();
     }
 
