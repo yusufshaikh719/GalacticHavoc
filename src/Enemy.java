@@ -63,6 +63,8 @@ public class Enemy extends GameObject {
                 if (getBounds().intersects(temp.getBounds())) {
                     game.enemyHp -= game.playerDmg;
                     handler.removeObject(temp);
+                    game.altCharge++;
+                    System.out.println("Alt charge: " + game.altCharge);
                     hitTime = System.currentTimeMillis();
                 }
             }

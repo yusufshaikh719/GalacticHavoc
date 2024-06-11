@@ -15,6 +15,7 @@ public class KeyInput extends KeyAdapter {
         if (key == KeyEvent.VK_S) handler.setDown(true);
         if (key == KeyEvent.VK_D) handler.setRight(true);
         if (key == KeyEvent.VK_SPACE) handler.setSpace(true);
+        if (key == KeyEvent.VK_Z) handler.setAlt(true);
     }
 
     public void keyReleased(KeyEvent e) {
@@ -24,5 +25,6 @@ public class KeyInput extends KeyAdapter {
         if (key == KeyEvent.VK_S) handler.setDown(false);
         if (key == KeyEvent.VK_D) handler.setRight(false);
         if (key == KeyEvent.VK_SPACE) handler.setSpace(false);
+        if (key == KeyEvent.VK_Z) handler.setAlt(false);
     }
 }

@@ -21,6 +21,8 @@ public class Game extends Canvas implements Runnable {
     public double playerHp = 100;
     public double playerMaxHP = 100;
     public int playerDmg = 10;
+    public int altCharge = 0;
+    public boolean breakThrough = false;
 
     public double enemyAmmo = 3;
     public double enemyHp = 300;
@@ -130,6 +132,12 @@ public class Game extends Canvas implements Runnable {
 
         handler.render(g);
 
+        g.setColor(Color.black);
+        g.fillOval((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100);
+        g.setColor(Color.yellow);
+        ((Graphics2D) g).setStroke(new BasicStroke(4));
+        g.drawArc((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100, 0, (int) (altCharge/(10.0 / 360)));
+        ((Graphics2D) g).setStroke(new BasicStroke(1));
         if (endDefeat) {
             g.setColor(Color.red);
             g.fillRect(0, 0, (int) (GameConstants.screenWidth + camera.getX()), (int) (GameConstants.screenHeight + camera.getY()));

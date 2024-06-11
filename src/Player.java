@@ -15,8 +15,7 @@ public class Player extends GameObject {
     Animation animLeft;
     Animation animUp;
     Animation animRight;
-    private long shootTime;
-    private long prevShootTime = 0;
+    private long shootTime = System.currentTimeMillis();
     private long hitTime;
     private String lastPressed = "up";
 
@@ -78,13 +77,16 @@ public class Player extends GameObject {
 
         // Shooting
         if (handler.isSpace()) {
-            shootTime = System.currentTimeMillis();
-            if (shootTime - prevShootTime >= 400 && game.playerAmmo >= 1) {
-                prevShootTime = shootTime;
+            if (System.currentTimeMillis() - shootTime >= 400 && game.playerAmmo >= 1) {
                 shootTime = System.currentTimeMillis();
-                handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), x, y, ss));
+                handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, false));
                 game.playerAmmo--;
             }
+        }
+
+        if (handler.isAlt() && game.altCharge >= 10) {
+            handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, true));
+            game.altCharge = 0;
         }
 
         // Reloading

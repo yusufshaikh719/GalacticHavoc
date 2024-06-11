@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Handler {
     public ArrayList<GameObject> object = new ArrayList<>();
-    private boolean up = false, down = false, right = false, left = false, space = false;
+    private boolean up = false, down = false, right = false, left = false, space = false, alt = false;
 
     public void tick() {
         for (int i = 0; i < object.size(); i++) {
@@ -75,5 +75,13 @@ public class Handler {
 
     public void setSpace(boolean space) {
         this.space = space;
+    }
+
+    public boolean isAlt() {
+        return alt;
+    }
+
+    public void setAlt(boolean alt) {
+        this.alt = alt;
     }
 }
