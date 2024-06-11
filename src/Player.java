@@ -1,7 +1,4 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.MouseInfo;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Player extends GameObject {
@@ -158,6 +155,8 @@ public class Player extends GameObject {
         g.fillRect(x - 9, y - 20, (int) (game.playerHp/(game.playerMaxHP / 50)), 10);
         g.setColor(Color.black);
         g.drawRect(x - 9, y - 20, 50, 10);
+        g.setFont(new Font("Courier", Font.BOLD, 10));
+        g.drawString("" + (int) game.playerHp, x + 6, y - 11);
 
         //ammo
         g.setColor(Color.orange);

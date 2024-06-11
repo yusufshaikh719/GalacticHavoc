@@ -146,6 +146,8 @@ public class Enemy extends GameObject {
         g.fillRect(x - 9, y - 10, (int) (game.enemyHp/(game.enemyMaxHP / 50)), 10);
         g.setColor(Color.black);
         g.drawRect(x - 9, y - 10, 50, 10);
+        g.setFont(new Font("Courier", Font.BOLD, 10));
+        g.drawString("" + (int) game.enemyHp, x + 7, y - 1);
     }
 
     public Rectangle getBounds() {
