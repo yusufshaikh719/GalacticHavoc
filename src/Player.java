@@ -17,6 +17,7 @@ public class Player extends GameObject {
     Animation animRight;
     private long shootTime = System.currentTimeMillis();
     private long hitTime;
+    private long gadgetTime = System.currentTimeMillis();
     private String lastPressed = "up";
 
     public Player(int x, int y, ID id, Handler handler, Game game, SpriteSheet ss, Camera camera) {
@@ -87,6 +88,15 @@ public class Player extends GameObject {
         if (handler.isAlt() && game.altCharge >= 10) {
             handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, true));
             game.altCharge = 0;
+        }
+
+        if (handler.isGadget() && game.gadgetTimes >= 1) {
+            if (System.currentTimeMillis() - gadgetTime >= 1000) {
+                gadgetTime = System.currentTimeMillis();
+                if (game.playerAmmo >= 1) game.playerAmmo = 3;
+                else game.playerAmmo += 2;
+                game.gadgetTimes--;
+            }
         }
 
         // Reloading

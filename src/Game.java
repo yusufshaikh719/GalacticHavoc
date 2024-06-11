@@ -22,7 +22,7 @@ public class Game extends Canvas implements Runnable {
     public double playerMaxHP = 100;
     public int playerDmg = 10;
     public int altCharge = 0;
-    public boolean breakThrough = false;
+    public int gadgetTimes = 3;
 
     public double enemyAmmo = 3;
     public double enemyHp = 300;
@@ -132,11 +132,16 @@ public class Game extends Canvas implements Runnable {
 
         handler.render(g);
 
+        g.setColor(Color.green);
+        g.fillOval((int) (GameConstants.screenWidth + camera.getX()) - 250, (int) (GameConstants.screenHeight + camera.getY()) - 135, 70, 70);
         g.setColor(Color.black);
         g.fillOval((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100);
+        g.setFont(new Font("SansSerif", Font.BOLD, 15));
+        g.drawString("" + gadgetTimes, (int) (GameConstants.screenWidth + camera.getX()) - 220, (int) (GameConstants.screenHeight + camera.getY()) - 95);
         g.setColor(Color.yellow);
         ((Graphics2D) g).setStroke(new BasicStroke(4));
         g.drawArc((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100, 0, (int) (altCharge/(10.0 / 360)));
+
         ((Graphics2D) g).setStroke(new BasicStroke(1));
         if (endDefeat) {
             g.setColor(Color.red);
