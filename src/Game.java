@@ -15,6 +15,7 @@ public class Game extends Canvas implements Runnable {
     private BufferedImage bird_sprite_sheet = null;
     private BufferedImage sprite_sheet = null;
     private BufferedImage floor = null;
+    private BufferedImage brawlStarsIcon = null;
 
     public int powercubes = 0;
     public double playerAmmo = 3;
@@ -51,12 +52,13 @@ public class Game extends Canvas implements Runnable {
         sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
         fox_sprite_sheet = loader.loadImage("/Assets/link-spritesheet_scaled.png");
         bird_sprite_sheet = loader.loadImage("/Assets/BIRDSPRITESHEET_scaled.png");
+        brawlStarsIcon = loader.loadImage("/Assets/brawl-stars-icon.png");
 
         font = new Font("SansSerif", Font.BOLD, 100);
         ss = new SpriteSheet(sprite_sheet);
         playerSS = new SpriteSheet(fox_sprite_sheet);
         enemySS = new SpriteSheet(bird_sprite_sheet);
-        floor = ss.grabImage32(4, 2, 32, 32);
+        floor = loader.loadImage("/Assets/floor.png");
 
         loadLevel(scene_1);
     }
@@ -132,15 +134,20 @@ public class Game extends Canvas implements Runnable {
 
         handler.render(g);
 
+        // Gadget icon
         g.setColor(Color.green);
         g.fillOval((int) (GameConstants.screenWidth + camera.getX()) - 250, (int) (GameConstants.screenHeight + camera.getY()) - 135, 70, 70);
         g.setColor(Color.black);
-        g.fillOval((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100);
         g.setFont(new Font("SansSerif", Font.BOLD, 15));
         g.drawString("" + gadgetTimes, (int) (GameConstants.screenWidth + camera.getX()) - 220, (int) (GameConstants.screenHeight + camera.getY()) - 95);
+
+        // Alt icon
+        if (altCharge >= 10) g.setColor(Color.yellow);
+        g.fillOval((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100);
         g.setColor(Color.yellow);
         ((Graphics2D) g).setStroke(new BasicStroke(4));
         g.drawArc((int) (GameConstants.screenWidth + camera.getX()) - 150, (int) (GameConstants.screenHeight + camera.getY()) - 150, 100, 100, 0, (int) (altCharge/(10.0 / 360)));
+        g.drawImage(brawlStarsIcon, (int) (GameConstants.screenWidth + camera.getX()) - 123, (int) (GameConstants.screenHeight + camera.getY()) - 124, null);
 
         ((Graphics2D) g).setStroke(new BasicStroke(1));
         if (endDefeat) {

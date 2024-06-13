@@ -15,7 +15,7 @@ public class Crate extends GameObject {
         ImageLoader loader = new ImageLoader();
         hp = 50;
 
-        crateImage = ss.grabImage32(6, 2, 32, 32);
+        crateImage = loader.loadImage("/Assets/crate.png");
         pcImage = loader.loadImage("/Assets/powercube_big.png");
     }
 

@@ -58,17 +58,6 @@ public class Enemy extends GameObject {
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
 
-            // Taking damage
-            if (temp.getId() == ID.PlayerBullet) {
-                if (getBounds().intersects(temp.getBounds())) {
-                    game.enemyHp -= game.playerDmg;
-                    handler.removeObject(temp);
-                    game.altCharge++;
-                    System.out.println("Alt charge: " + game.altCharge);
-                    hitTime = System.currentTimeMillis();
-                }
-            }
-
             if (temp.getId() == ID.Block) {
 
                 // If too close to a wall
@@ -128,7 +117,7 @@ public class Enemy extends GameObject {
         game.enemyLoc[0] = y / 32;
         game.enemyLoc[1] = x / 32;
 
-        if (game.enemyHp <= 0) {
+        if ((int) game.enemyHp <= 0) {
             handler.removeObject(this);
             game.endVictory = true;
         }
@@ -137,7 +126,6 @@ public class Enemy extends GameObject {
 
     public void render(Graphics g) {
         g.drawImage(enemyImage[0], x - 15, y - 22, null);
-//        anim.drawAnimation(g, x - 15, y - 22, 0);
 
         //heath
         g.setColor(Color.gray);
@@ -148,6 +136,23 @@ public class Enemy extends GameObject {
         g.drawRect(x - 9, y - 10, 50, 10);
         g.setFont(new Font("Courier", Font.BOLD, 10));
         g.drawString("" + (int) game.enemyHp, x + 7, y - 1);
+
+        for (int i = 0; i < handler.object.size(); i++) {
+            GameObject temp = handler.object.get(i);
+            // Taking damage
+            if (temp.getId() == ID.PlayerBullet) {
+                if (getBounds().intersects(temp.getBounds())) {
+                    game.enemyHp -= game.playerDmg;
+                    handler.removeObject(temp);
+                    game.altCharge++;
+                    hitTime = System.currentTimeMillis();
+                    g.setColor(Color.yellow);
+                    g.setFont(new Font("Courier", Font.BOLD, 30));
+                    g.drawString("" + game.playerDmg, x, y - 30);
+                }
+            }
+        }
+
     }
 
     public Rectangle getBounds() {

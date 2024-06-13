@@ -6,7 +6,7 @@ public class PlayerBullet extends GameObject {
 
     private Handler handler;
     private Game game;
-    private boolean breakThrough;
+    public boolean breakThrough;
 
     public PlayerBullet(int x, int y, ID id, Handler handler, int mx, int my, SpriteSheet ss, Game game, boolean breakThrough) {
         super(x, y, id, ss);
@@ -29,6 +29,7 @@ public class PlayerBullet extends GameObject {
             if (temp.getId() == ID.Block) {
                 if (getBounds().intersects(temp.getBounds())) {
                     if (breakThrough) {
+                        game.grid[temp.getY() / 32][temp.getX() / 32] = 1;
                         handler.removeObject(temp);
                     }
                     else handler.removeObject(this);
@@ -53,5 +54,4 @@ public class PlayerBullet extends GameObject {
         if (breakThrough) return new Rectangle(x, y, 16, 16);
         else return new Rectangle(x, y, 8, 8);
     }
-
 }
