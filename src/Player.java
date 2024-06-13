@@ -16,6 +16,9 @@ public class Player extends GameObject {
     private long hitTime;
     private long gadgetTime = System.currentTimeMillis();
     private String lastPressed = "up";
+    private int shootingCount = 0;
+    private boolean shooting = false;
+    private long shootingInterval = System.currentTimeMillis();
 
     public Player(int x, int y, ID id, Handler handler, Game game, SpriteSheet ss, Camera camera) {
         super(x, y, id, ss);
@@ -74,11 +77,19 @@ public class Player extends GameObject {
         } else if (!handler.isLeft()) velX = 0;
 
         // Shooting
-        if (handler.isSpace()) {
-            if (System.currentTimeMillis() - shootTime >= 400 && game.playerAmmo >= 1) {
+        if ((handler.isSpace() && System.currentTimeMillis() - shootTime >= 400 && game.playerAmmo >= 1) || (shooting && System.currentTimeMillis() - shootingInterval >= 200)) {
+            if (!shooting) {
                 shootTime = System.currentTimeMillis();
-                handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, false));
                 game.playerAmmo--;
+                shooting = true;
+            } else {
+                if (shootingCount >= 7) {
+                    shooting = false;
+                    shootingCount = 0;
+                }
+                shootingCount++;
+                shootingInterval = System.currentTimeMillis();
+                handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, false));
             }
         }
 
