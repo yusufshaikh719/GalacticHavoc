@@ -19,6 +19,7 @@ public class Player extends GameObject {
     private int shootingCount = 0;
     private boolean shooting = false;
     private long shootingInterval = System.currentTimeMillis();
+    private double[] angle = new double[2];
 
     public Player(int x, int y, ID id, Handler handler, Game game, SpriteSheet ss, Camera camera) {
         super(x, y, id, ss);
@@ -77,19 +78,23 @@ public class Player extends GameObject {
         } else if (!handler.isLeft()) velX = 0;
 
         // Shooting
-        if ((handler.isSpace() && System.currentTimeMillis() - shootTime >= 400 && game.playerAmmo >= 1) || (shooting && System.currentTimeMillis() - shootingInterval >= 200)) {
+        if ((handler.isSpace() && System.currentTimeMillis() - shootTime >= 400 && game.playerAmmo >= 1) || (shooting && System.currentTimeMillis() - shootingInterval >= 150)) {
             if (!shooting) {
                 shootTime = System.currentTimeMillis();
+                double magnitude = Math.sqrt(Math.pow(Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)) - x + 16, 2) + Math.pow(Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)) - y + 24, 2));
+                angle[0] = ((Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)) - x + 16) / magnitude) * GameConstants.bulletSpeed;
+                angle[1] = ((Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)) - y + 24) / magnitude) * GameConstants.bulletSpeed;
                 game.playerAmmo--;
                 shooting = true;
             } else {
                 if (shootingCount >= 7) {
                     shooting = false;
                     shootingCount = 0;
+                    shootTime = System.currentTimeMillis();
                 }
                 shootingCount++;
                 shootingInterval = System.currentTimeMillis();
-                handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, false));
+                handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, angle[0], angle[1], ss, game, false));
             }
         }
 

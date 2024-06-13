@@ -7,22 +7,28 @@ public class PlayerBullet extends GameObject {
     private Handler handler;
     private Game game;
     public boolean breakThrough;
+    private int startX;
+    private int startY;
 
-    public PlayerBullet(int x, int y, ID id, Handler handler, int mx, int my, SpriteSheet ss, Game game, boolean breakThrough) {
+    public PlayerBullet(int x, int y, ID id, Handler handler, double vx, double vy, SpriteSheet ss, Game game, boolean breakThrough) {
         super(x, y, id, ss);
+        startX = x;
+        startY = y;
         this.handler = handler;
         this.game = game;
         this.breakThrough = breakThrough;
 
-        double magnitude = Math.sqrt(Math.pow(mx - x, 2) + Math.pow(my - y, 2));
-         velX = ((mx - x) / magnitude) * GameConstants.bulletSpeed;
-         velY = ((my - y) / magnitude) * GameConstants.bulletSpeed;
+         velX = vx;
+         velY = vy;
     }
 
     @Override
     public void tick() {
         x += Math.toIntExact(Math.round(velX));
         y += Math.toIntExact(Math.round(velY));
+
+        double distance = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+        if (distance > (32 * GameConstants.playerShootingRange)) handler.removeObject(this);
 
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);

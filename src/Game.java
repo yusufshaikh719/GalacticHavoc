@@ -39,13 +39,13 @@ public class Game extends Canvas implements Runnable {
     public Game() {
         new Window(GameConstants.screenWidth, GameConstants.screenHeight, "Galactic Havoc", this);
         start();
+        camera = new Camera(0, 0);
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 grid[i][j] = 1;
             }
         }
         handler = new Handler();
-        camera = new Camera(0, 0);
         this.addKeyListener(new KeyInput(handler));
         ImageLoader loader = new ImageLoader();
         scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
