@@ -9,14 +9,7 @@ public class Game extends Canvas implements Runnable {
     private SpriteSheet ss;
     private SpriteSheet playerSS;
     private SpriteSheet enemySS;
-
-    private BufferedImage scene_1 = null;
-    private BufferedImage fox_sprite_sheet = null;
-    private BufferedImage bird_sprite_sheet = null;
-    private BufferedImage sprite_sheet = null;
-    private BufferedImage floor = null;
-    private BufferedImage brawlStarsIcon = null;
-
+    private BufferedImage scene_1 = null, fox_sprite_sheet = null, bird_sprite_sheet = null, sprite_sheet = null, floor = null, brawlStarsIcon = null;
     public int powercubes = 0;
     public double playerAmmo = 3;
     public double playerHp = 100;

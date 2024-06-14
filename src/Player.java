@@ -99,7 +99,8 @@ public class Player extends GameObject {
         }
 
         if (handler.isAlt() && game.altCharge >= 10) {
-            handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)), Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)), ss, game, true));
+            double magnitude = Math.sqrt(Math.pow(Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)) - x + 16, 2) + Math.pow(Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)) - y + 24, 2));
+            handler.addObject(new PlayerBullet(x + 16, y + 24, ID.PlayerBullet, handler, ((Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getX() + camera.getX() - 7)) - x + 16) / magnitude) * GameConstants.bulletSpeed, ((Math.toIntExact(Math.round(MouseInfo.getPointerInfo().getLocation().getY() + camera.getY() - 30)) - y + 24) / magnitude) * GameConstants.bulletSpeed, ss, game, true));
             game.altCharge = 0;
         }
 
