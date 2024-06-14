@@ -18,8 +18,8 @@ public class PlayerBullet extends GameObject {
         this.game = game;
         this.breakThrough = breakThrough;
 
-         velX = vx;
-         velY = vy;
+        velX = vx;
+        velY = vy;
     }
 
     @Override

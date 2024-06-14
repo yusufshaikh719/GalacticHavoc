@@ -21,6 +21,7 @@ public class Game extends Canvas implements Runnable {
     public double playerAmmo = 3;
     public double playerHp = 100;
     public double playerMaxHP = 100;
+    public boolean playerIsVisible = true;
     public int playerDmg = 10;
     public int altCharge = 0;
     public int gadgetTimes = 3;
@@ -28,6 +29,7 @@ public class Game extends Canvas implements Runnable {
     public double enemyAmmo = 3;
     public double enemyHp = 300;
     public double enemyMaxHP = 300;
+    public boolean enemyIsVisible = true;
 
     public int[][] grid = new int[36][64];
     public int[] enemyLoc = new int[2];
@@ -182,21 +184,24 @@ public class Game extends Canvas implements Runnable {
                 int green = (pixel >> 8) & 0xff;
                 int blue = (pixel) & 0xff;
 
-                if (red == 255) {
+                if (red == 255 && green == 0 && blue == 48) {
                     handler.addObject(new Block(i*32, j*32, ID.Block, ss));
                     grid[j][i] = 0;
                 }
-                if (green == 255 && blue == 76) {
-                    handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, enemySS, this));
-                    enemyLoc[0] = (j);
-                    enemyLoc[1] = (i);
+                if (red == 238 && green == 255 && blue == 0) {
+                    handler.addObject(new Grass(i*32, j*32, ID.Grass, ss, this, handler));
                 }
-                if (blue == 255 && green == 54) {
+                if (red == 47 && green == 54 && blue == 255) {
                     handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, playerSS, camera));
                     playerLoc[0] = (j);
                     playerLoc[1] = (i);
                 }
-                if (blue == 255 && green == 255) {
+                if (red == 34 && green == 255 && blue == 76) {
+                    handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, enemySS, this));
+                    enemyLoc[0] = (j);
+                    enemyLoc[1] = (i);
+                }
+                if (red == 0 && green == 255 && blue == 255) {
                     handler.addObject(new Crate(i*32, j*32, ID.Crate, ss, handler, this));
                 }
             }

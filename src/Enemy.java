@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 public class Enemy extends GameObject {
     private Handler handler;
     private BufferedImage[] enemyImage = new BufferedImage[4];
+    private ImageLoader loader;
     private Animation anim;
     private Game game;
     private AStar aStar;
@@ -20,6 +21,7 @@ public class Enemy extends GameObject {
         this.handler = handler;
         this.game = game;
         aStar = new AStar();
+        loader = new ImageLoader();
 
         shootTime = System.currentTimeMillis();
 
@@ -35,7 +37,20 @@ public class Enemy extends GameObject {
         // Pathplanning
         AStar.Pair src = new AStar.Pair(game.enemyLoc[0], game.enemyLoc[1]);
         AStar.Pair dest = new AStar.Pair(game.playerLoc[0], game.playerLoc[1]);
+        int randoX = 5;
+        int randoY = 6;
+        if (src.equals(dest)) {
+            randoX = (int) (Math.random() * 64);
+            randoY = (int) (Math.random() * 36);
+            while (game.grid[randoY][randoX] == 0) {
+                randoX = (int) (Math.random() * 64);
+                randoY = (int) (Math.random() * 36);
+            }
+        }
         if (game.enemyHp < (game.enemyMaxHP / 2.5)) dest = new AStar.Pair(36 - game.playerLoc[0], 64 - game.playerLoc[1]);
+        if (!game.playerIsVisible) {
+            dest = new AStar.Pair(randoY, randoX);
+        }
 
         String str = aStar.aStarSearch(game.grid, game.grid.length , game.grid[0].length, src, dest);
         if (str.contains("(")) {
@@ -55,8 +70,13 @@ public class Enemy extends GameObject {
         }
 
         canFire = true;
+        game.enemyIsVisible = true;
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
+
+            if (temp.getId() == ID.Grass) {
+                if (getBounds().intersects(temp.getBounds())) game.enemyIsVisible = false;
+            }
 
             if (temp.getId() == ID.Block) {
 
@@ -89,9 +109,10 @@ public class Enemy extends GameObject {
             GameObject temp = handler.object.get(i);
             if (temp.getId() == ID.Player) {
                 double dist = Math.sqrt(Math.pow(temp.getX() - x, 2) +  Math.pow(temp.getY() - y, 2));
-                if (System.currentTimeMillis() - shootTime >= 1000 && game.enemyAmmo >= 1 && canFire && dist <= 576) {
+                if (System.currentTimeMillis() - shootTime >= 1500 && game.enemyAmmo >= 1 && canFire && dist <= 32 * GameConstants.playerShootingRange) {
                     shootTime = System.currentTimeMillis();
                     double angle = Math.atan2(temp.getY() - y, temp.getX() - x);
+                    if (!game.playerIsVisible) angle += Math.random() * (0.3 + 0.3) -0.3;
                     for (int j = 0; j < 5; j++) {
                         handler.addObject(new EnemyBullet(x + 16, y + 24, ID.EnemyBullet, handler, ss, angle + (j / 10.0)));
                         handler.addObject(new EnemyBullet(x + 16, y + 24, ID.EnemyBullet, handler, ss, angle - (j / 10.0)));
@@ -125,17 +146,19 @@ public class Enemy extends GameObject {
     }
 
     public void render(Graphics g) {
-        g.drawImage(enemyImage[0], x - 15, y - 22, null);
-
+        if (!game.enemyIsVisible) g.drawImage(loader.loadImage("/Assets/invisible.png"), x, y, null);
+        else g.drawImage(enemyImage[0], x - 15, y - 22, null);
         //heath
-        g.setColor(Color.gray);
-        g.fillRect(x - 9, y - 10, 50, 10);
-        g.setColor(Color.green);
-        g.fillRect(x - 9, y - 10, (int) (game.enemyHp/(game.enemyMaxHP / 50)), 10);
-        g.setColor(Color.black);
-        g.drawRect(x - 9, y - 10, 50, 10);
-        g.setFont(new Font("Courier", Font.BOLD, 10));
-        g.drawString("" + (int) game.enemyHp, x + 7, y - 1);
+        if (game.enemyIsVisible) {
+            g.setColor(Color.gray);
+            g.fillRect(x - 9, y - 10, 50, 10);
+            g.setColor(Color.green);
+            g.fillRect(x - 9, y - 10, (int) (game.enemyHp/(game.enemyMaxHP / 50)), 10);
+            g.setColor(Color.black);
+            g.drawRect(x - 9, y - 10, 50, 10);
+            g.setFont(new Font("Courier", Font.BOLD, 10));
+            g.drawString("" + (int) game.enemyHp, x + 7, y - 1);
+        }
 
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);

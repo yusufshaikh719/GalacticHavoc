@@ -87,7 +87,7 @@ public class Player extends GameObject {
                 game.playerAmmo--;
                 shooting = true;
             } else {
-                if (shootingCount >= 7) {
+                if (shootingCount >= 5) {
                     shooting = false;
                     shootingCount = 0;
                     shootTime = System.currentTimeMillis();
@@ -113,24 +113,12 @@ public class Player extends GameObject {
         }
 
         // Reloading
-        if (Math.abs(System.currentTimeMillis() - shootTime) >= 1 && game.playerAmmo < 3) {
+        if (System.currentTimeMillis() - shootTime >= 600 && game.playerAmmo < 3) {
             game.playerAmmo += 0.01;
         }
 
-        // Getting hit
-        for (int i = 0; i < handler.object.size(); i++) {
-            GameObject temp = handler.object.get(i);
-            if (temp.getId() == ID.EnemyBullet) {
-                if (getBounds().intersects(temp.getBounds())) {
-                    game.playerHp -= 10;
-                    handler.removeObject(temp);
-                    hitTime = System.currentTimeMillis();
-                }
-            }
-        }
-
         // Healing
-        if (Math.abs(System.currentTimeMillis() - hitTime) >= 2000 && Math.abs(System.currentTimeMillis() - shootTime) >= 2000) {
+        if (Math.abs(System.currentTimeMillis() - hitTime) >= 2000 && Math.abs(System.currentTimeMillis() - shootTime) >= 2600) {
             if (game.playerHp < game.playerMaxHP) game.playerHp += (0.001 * game.playerMaxHP);
         }
         
@@ -188,6 +176,21 @@ public class Player extends GameObject {
             g.drawString("" + game.powercubes, x + 21, y - 26);
             g.drawImage(pcImage, x + 5, y - 35, null);
         }
+
+        for (int i = 0; i < handler.object.size(); i++) {
+            GameObject temp = handler.object.get(i);
+            // Taking damage
+            if (temp.getId() == ID.EnemyBullet) {
+                if (getBounds().intersects(temp.getBounds())) {
+                    game.playerHp -= 10;
+                    handler.removeObject(temp);
+                    hitTime = System.currentTimeMillis();
+                    g.setColor(Color.yellow);
+                    g.setFont(new Font("Courier", Font.BOLD, 30));
+                    g.drawString("10", x, y - 30);
+                }
+            }
+        }
     }
 
     @Override
@@ -196,6 +199,7 @@ public class Player extends GameObject {
     }
 
     private void collision() {
+        game.playerIsVisible = true;
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
             if (temp.getId() == ID.Block) {
@@ -203,6 +207,10 @@ public class Player extends GameObject {
                     x += Math.toIntExact(Math.round(velX * -1));
                     y += Math.toIntExact(Math.round(velY * -1));
                 }
+            }
+
+            if (temp.getId() == ID.Grass) {
+                if (getBounds().intersects(temp.getBounds())) game.playerIsVisible = false;
             }
 
             if (temp.getId() == ID.Enemy) {

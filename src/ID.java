@@ -4,5 +4,6 @@ public enum ID {
     PlayerBullet(),
     EnemyBullet(),
     Enemy(),
-    Crate();
+    Crate(),
+    Grass();
 }

@@ -23,7 +23,7 @@ public class Crate extends GameObject {
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
             if (temp.getId() == ID.PlayerBullet) {
-                if (getBounds().intersects(temp.getBounds())) {
+                if (getBounds().intersects(temp.getBounds()) && hp > 0) {
                     hp -= game.playerDmg;
                     handler.removeObject(temp);
                 }
@@ -31,9 +31,9 @@ public class Crate extends GameObject {
             if (temp.getId() == ID.Player) {
                 if (hp <= 0 && getBounds().intersects(temp.getBounds())) {
                     game.powercubes++;
-                    game.playerMaxHP += 50;
+                    game.playerMaxHP += 25;
                     game.playerDmg += 5;
-                    game.playerHp = game.playerMaxHP;
+                    game.playerHp += 25;
                     handler.removeObject(this);
                 }
             }

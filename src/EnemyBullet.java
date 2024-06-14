@@ -5,10 +5,14 @@ import java.awt.Rectangle;
 public class EnemyBullet extends GameObject {
 
     private Handler handler;
+    private int startX;
+    private int startY;
 
     public EnemyBullet(int x, int y, ID id, Handler handler, SpriteSheet ss, double angle) {
         super(x, y, id, ss);
         this.handler = handler;
+        startX = x;
+        startY = y;
 
         velX = (int) (GameConstants.bulletSpeed * Math.cos(angle));
         velY = (int) (GameConstants.bulletSpeed * Math.sin(angle));
@@ -18,6 +22,9 @@ public class EnemyBullet extends GameObject {
     public void tick() {
         x += Math.toIntExact(Math.round(velX));
         y += Math.toIntExact(Math.round(velY));
+
+        double distance = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+        if (distance > (32 * GameConstants.playerShootingRange)) handler.removeObject(this);
 
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
