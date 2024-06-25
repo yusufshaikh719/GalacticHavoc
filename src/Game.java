@@ -41,21 +41,21 @@ public class Game extends Canvas implements Runnable {
             }
         }
         handler = new Handler();
+
         this.addKeyListener(new KeyInput(handler));
         ImageLoader loader = new ImageLoader();
-        scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
-        sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
+
         fox_sprite_sheet = loader.loadImage("/Assets/link-spritesheet_scaled.png");
         bird_sprite_sheet = loader.loadImage("/Assets/BIRDSPRITESHEET_scaled.png");
-        brawlStarsIcon = loader.loadImage("/Assets/brawl-stars-icon.png");
-
-        font = new Font("SansSerif", Font.BOLD, 100);
-        ss = new SpriteSheet(sprite_sheet);
         playerSS = new SpriteSheet(fox_sprite_sheet);
         enemySS = new SpriteSheet(bird_sprite_sheet);
         floor = loader.loadImage("/Assets/floor.png");
+        ss = new SpriteSheet(sprite_sheet);
+        sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
+        brawlStarsIcon = loader.loadImage("/Assets/brawl-stars-icon.png");
+        font = new Font("SansSerif", Font.BOLD, 100);
 
-        loadLevel(scene_1);
+        loadLevel();
     }
 
     public void run() {
@@ -166,39 +166,119 @@ public class Game extends Canvas implements Runnable {
         bs.show();
     }
 
-    private void loadLevel(BufferedImage image) {
-        int w = image.getWidth();
-        int h = image.getHeight();
-
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                int pixel = image.getRGB(i, j);
-                int red = (pixel >> 16) & 0xff;
-                int green = (pixel >> 8) & 0xff;
-                int blue = (pixel) & 0xff;
-
-                if (red == 255 && green == 0 && blue == 48) {
+    private void loadLevel() {
+        boolean[][] cellMap = generateMap();
+        boolean playerSpawned = false;
+        boolean enemySpawned = false;
+        for (int i = 0; i < cellMap.length; i++) {
+            for (int j = 0; j < cellMap[0].length; j++) {
+                if (!cellMap[i][j] && !playerSpawned) {
+                    handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, playerSS, camera));
+                    playerSpawned = true;
+                }
+                if (!cellMap[63-i][35-j] && !enemySpawned) {
+                    handler.addObject(new Enemy((63-i)*32, (35-j)*32, ID.Enemy, handler, enemySS, this));
+                    enemySpawned = true;
+                }
+                if (cellMap[i][j]) {
                     handler.addObject(new Block(i*32, j*32, ID.Block, ss));
                     grid[j][i] = 0;
                 }
-                if (red == 238 && green == 255 && blue == 0) {
-                    handler.addObject(new Grass(i*32, j*32, ID.Grass, ss, this, handler));
-                }
-                if (red == 47 && green == 54 && blue == 255) {
-                    handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, playerSS, camera));
-                    playerLoc[0] = (j);
-                    playerLoc[1] = (i);
-                }
-                if (red == 34 && green == 255 && blue == 76) {
-                    handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, enemySS, this));
-                    enemyLoc[0] = (j);
-                    enemyLoc[1] = (i);
-                }
-                if (red == 0 && green == 255 && blue == 255) {
-                    handler.addObject(new Crate(i*32, j*32, ID.Crate, ss, handler, this));
+            }
+        }
+
+//        placeTreasure(cellMap);
+    }
+
+    public boolean[][] doSimulationStep(boolean[][] oldMap){
+        boolean[][] newMap = new boolean[64][36];
+        //Loop over each row and column of the map
+        for(int x=0; x<oldMap.length; x++){
+            for(int y=0; y<oldMap[0].length; y++){
+                int nbs = countAliveNeighbours(oldMap, x, y);
+                //The new value is based on our simulation rules
+                //First, if a cell is alive but has too few neighbours, kill it.
+                if(oldMap[x][y]){
+                    if(nbs < GameConstants.deathLimit){
+                        newMap[x][y] = false;
+                    }
+                    else{
+                        newMap[x][y] = true;
+                    }
+                } //Otherwise, if the cell is dead now, check if it has the right number of neighbours to be 'born'
+                else{
+                    if(nbs > GameConstants.birthLimit){
+                        newMap[x][y] = true;
+                    }
+                    else{
+                        newMap[x][y] = false;
+                    }
                 }
             }
         }
+        return newMap;
+    }
+
+    public void placeTreasure(boolean[][] world){
+        //How hidden does a spot need to be for treasure?
+        //I find 5 or 6 is good. 6 for very rare treasure.
+        int treasureHiddenLimit = 5;
+        for (int x=0; x < 64; x++){
+            for (int y=0; y < 36; y++){
+                if(!world[x][y]){
+                    int nbs = countAliveNeighbours(world, x, y);
+                    if(nbs >= treasureHiddenLimit){
+                        handler.addObject(new Crate(x*32, y*32, ID.Crate, ss, handler, this));
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean[][] generateMap(){
+        //Create a new map
+        boolean[][] cellmap = new boolean[64][36];
+        //Set up the map with random values
+        cellmap = initialiseMap(cellmap);
+        //And now run the simulation for a set number of steps
+        for(int i=0; i<GameConstants.numberOfSteps; i++){
+            cellmap = doSimulationStep(cellmap);
+        }
+        return cellmap;
+    }
+
+    public boolean[][] initialiseMap(boolean[][] map){
+        for(int x=0; x<64; x++){
+            for(int y=0; y<36; y++){
+                if(Math.random() < GameConstants.chanceToStartAlive){
+                    map[x][y] = true;
+                }
+            }
+        }
+        return map;
+    }
+
+    public int countAliveNeighbours(boolean[][] map, int x, int y){
+        int count = 0;
+        for(int i=-1; i<2; i++){
+            for(int j=-1; j<2; j++){
+                int neighbour_x = x+i;
+                int neighbour_y = y+j;
+                //If we're looking at the middle point
+                if(i == 0 && j == 0){
+                    //Do nothing, we don't want to add ourselves in!
+                }
+                //In case the index we're looking at it off the edge of the map
+                else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= map.length || neighbour_y >= map[0].length){
+                    count = count + 1;
+                }
+                //Otherwise, a normal check of the neighbour
+                else if(map[neighbour_x][neighbour_y]){
+                    count = count + 1;
+                }
+            }
+        }
+        return count;
     }
 
     public static void main(String[] args) {

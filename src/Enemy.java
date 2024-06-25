@@ -71,6 +71,7 @@ public class Enemy extends GameObject {
 
         canFire = true;
         game.enemyIsVisible = true;
+        System.out.println("Handler size : " + handler.object.size());
         for (int i = 0; i < handler.object.size(); i++) {
             GameObject temp = handler.object.get(i);
 
@@ -100,7 +101,7 @@ public class Enemy extends GameObject {
                 }
 
                 // If walls are in the way of shooting
-                if (getSightBounds().intersects(temp.getBounds())) canFire = false;
+                if (getSightBounds() != null && getSightBounds().intersects(temp.getBounds())) canFire = false;
             }
         }
 
