@@ -40,14 +40,14 @@ public class Enemy extends GameObject {
         int randoX = 5;
         int randoY = 6;
         if (src.equals(dest)) {
-            randoX = (int) (Math.random() * 64);
-            randoY = (int) (Math.random() * 36);
+            randoX = (int) (Math.random() * GameConstants.gameWidth);
+            randoY = (int) (Math.random() * GameConstants.gameHeight);
             while (game.grid[randoY][randoX] == 0) {
-                randoX = (int) (Math.random() * 64);
-                randoY = (int) (Math.random() * 36);
+                randoX = (int) (Math.random() * GameConstants.gameWidth);
+                randoY = (int) (Math.random() * GameConstants.gameHeight);
             }
         }
-        if (game.enemyHp < (game.enemyMaxHP / 2.5)) dest = new AStar.Pair(36 - game.playerLoc[0], 64 - game.playerLoc[1]);
+        if (game.enemyHp < (game.enemyMaxHP / 2.5)) dest = new AStar.Pair(GameConstants.gameHeight - game.playerLoc[0], GameConstants.gameWidth - game.playerLoc[1]);
         if (!game.playerIsVisible) {
             dest = new AStar.Pair(randoY, randoX);
         }
@@ -100,7 +100,7 @@ public class Enemy extends GameObject {
                 }
 
                 // If walls are in the way of shooting
-                if (getSightBounds().intersects(temp.getBounds())) canFire = false;
+                if (getSightBounds().intersects(temp.getBounds()) && getSightBounds() != null) canFire = false;
             }
         }
 
@@ -133,6 +133,10 @@ public class Enemy extends GameObject {
         }
 
         // Updating position
+
+        velX = Math.max(-GameConstants.enemySpeed, Math.min(GameConstants.enemySpeed, velX));
+        velY = Math.max(-GameConstants.enemySpeed, Math.min(GameConstants.enemySpeed, velY));
+
         x += Math.toIntExact(Math.round(velX));
         y += Math.toIntExact(Math.round(velY));
         game.enemyLoc[0] = y / 32;

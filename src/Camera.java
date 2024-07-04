@@ -11,9 +11,9 @@ public class Camera {
         y += ((obj.getY() - y) - GameConstants.screenHeight / 4) * 0.05f;
 
         if (x <= 0) x = 0;
-        if (x >= GameConstants.screenWidth - 1360) x = GameConstants.screenWidth - 1360;
+        if (x >= (32*64) - (GameConstants.screenWidth) + 16) x = (32*64) - (GameConstants.screenWidth) + 16;
         if (y <= 0) y = 0;
-        if (y >= GameConstants.screenHeight - 944) y = GameConstants.screenHeight - 944;
+        if (y >= (32*64) - (GameConstants.screenHeight) + 40) y = (32*64) - (GameConstants.screenHeight) + 40;
     }
     
     public float getX() {

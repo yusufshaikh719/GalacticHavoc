@@ -196,7 +196,7 @@ public class Player extends GameObject {
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 30, 30);
+        return new Rectangle(x, y, 28, 28);
     }
 
     private void collision() {

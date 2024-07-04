@@ -1,5 +1,6 @@
-import java.awt.image.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 public class Game extends Canvas implements Runnable {
     private boolean isRunning = false;
@@ -9,7 +10,7 @@ public class Game extends Canvas implements Runnable {
     private SpriteSheet ss;
     private SpriteSheet playerSS;
     private SpriteSheet enemySS;
-    private BufferedImage scene_1 = null, fox_sprite_sheet = null, bird_sprite_sheet = null, sprite_sheet = null, floor = null, brawlStarsIcon = null;
+    private BufferedImage floor = null, brawlStarsIcon = null;
     public int powercubes = 0;
     public double playerAmmo = 3;
     public double playerHp = 100;
@@ -24,7 +25,8 @@ public class Game extends Canvas implements Runnable {
     public double enemyMaxHP = 300;
     public boolean enemyIsVisible = true;
 
-    public int[][] grid = new int[36][64];
+    public int[][] grid = new int[GameConstants.gameHeight][GameConstants.gameWidth];
+    public boolean[][] cellMap = new boolean[GameConstants.gameWidth][GameConstants.gameHeight];
     public int[] enemyLoc = new int[2];
     public int[] playerLoc = new int[2];
     public boolean endDefeat;
@@ -34,28 +36,24 @@ public class Game extends Canvas implements Runnable {
     public Game() {
         new Window(GameConstants.screenWidth, GameConstants.screenHeight, "Galactic Havoc", this);
         start();
-        camera = new Camera(0, 0);
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 grid[i][j] = 1;
             }
         }
+        camera = new Camera(0, 0);
         handler = new Handler();
         this.addKeyListener(new KeyInput(handler));
         ImageLoader loader = new ImageLoader();
-        scene_1 = loader.loadImage("/Assets/compsci_scene_1.png");
-        sprite_sheet = loader.loadImage("/Assets/sprite-sheet.png");
-        fox_sprite_sheet = loader.loadImage("/Assets/link-spritesheet_scaled.png");
-        bird_sprite_sheet = loader.loadImage("/Assets/BIRDSPRITESHEET_scaled.png");
-        brawlStarsIcon = loader.loadImage("/Assets/brawl-stars-icon.png");
-
         font = new Font("SansSerif", Font.BOLD, 100);
-        ss = new SpriteSheet(sprite_sheet);
-        playerSS = new SpriteSheet(fox_sprite_sheet);
-        enemySS = new SpriteSheet(bird_sprite_sheet);
+
+        brawlStarsIcon = loader.loadImage("/Assets/brawl-stars-icon.png");
+        ss = new SpriteSheet(loader.loadImage("/Assets/sprite-sheet.png"));
+        playerSS = new SpriteSheet(loader.loadImage("/Assets/link-spritesheet_scaled.png"));
+        enemySS = new SpriteSheet(loader.loadImage("/Assets/BIRDSPRITESHEET_scaled.png"));
         floor = loader.loadImage("/Assets/floor.png");
 
-        loadLevel(scene_1);
+        loadLevel();
     }
 
     public void run() {
@@ -166,39 +164,20 @@ public class Game extends Canvas implements Runnable {
         bs.show();
     }
 
-    private void loadLevel(BufferedImage image) {
-        int w = image.getWidth();
-        int h = image.getHeight();
+    private void loadLevel() {
+        MapGenerator mg = new MapGenerator();
+        cellMap = mg.generateMap();
 
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                int pixel = image.getRGB(i, j);
-                int red = (pixel >> 16) & 0xff;
-                int green = (pixel >> 8) & 0xff;
-                int blue = (pixel) & 0xff;
-
-                if (red == 255 && green == 0 && blue == 48) {
+        for (int i = 0; i < cellMap.length; i++) {
+            for (int j = 0; j < cellMap[0].length; j++) {
+                if (cellMap[i][j]) {
                     handler.addObject(new Block(i*32, j*32, ID.Block, ss));
                     grid[j][i] = 0;
                 }
-                if (red == 238 && green == 255 && blue == 0) {
-                    handler.addObject(new Grass(i*32, j*32, ID.Grass, ss, this, handler));
-                }
-                if (red == 47 && green == 54 && blue == 255) {
-                    handler.addObject(new Player(i*32, j*32, ID.Player, handler, this, playerSS, camera));
-                    playerLoc[0] = (j);
-                    playerLoc[1] = (i);
-                }
-                if (red == 34 && green == 255 && blue == 76) {
-                    handler.addObject(new Enemy(i*32, j*32, ID.Enemy, handler, enemySS, this));
-                    enemyLoc[0] = (j);
-                    enemyLoc[1] = (i);
-                }
-                if (red == 0 && green == 255 && blue == 255) {
-                    handler.addObject(new Crate(i*32, j*32, ID.Crate, ss, handler, this));
-                }
             }
         }
+
+        mg.placeEntities(cellMap, ss, handler, this, playerSS, camera, enemySS);
     }
 
     public static void main(String[] args) {
